@@ -1,0 +1,25 @@
+scalar Long
+scalar Date
+scalar BigDecimal
+
+type Query {
+    books: [Book]
+}
+
+type Mutation {
+    test(games: [Game]): String
+}
+
+input Game {
+    id: Long
+    title: String
+    releaseDate: Date
+    profit: BigDecimal
+}
+
+type Book {
+    id: Long
+    title: String
+    releaseDate: Date
+    profit: BigDecimal
+}

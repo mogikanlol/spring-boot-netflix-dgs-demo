@@ -1,0 +1,40 @@
+plugins {
+    id('java')
+    id('org.springframework.boot') version('2.2.6.RELEASE')
+    id('io.freefair.lombok') version('5.3.0')
+    id ('com.netflix.dgs.codegen') version ('5.1.9') // doesn't work with old gradle versions because of kotlin support
+}
+
+group = 'com.example'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+dependencies {
+
+    implementation(platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES))
+    implementation(platform("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release")) {
+        exclude group: 'io.projectreactor' // incompatible with webflux projectreactor version
+    }
+    implementation("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter") {
+        exclude group: 'org.springframework.boot' // incompatible with project spring boot version
+        exclude group: 'io.projectreactor' // incompatible with webflux projectreactor version
+    }
+    implementation("com.graphql-java:graphql-java-extended-scalars:17.0")
+
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation ('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'io.projectreactor' // incompatible with webflux projectreactor version
+    }
+    implementation ('org.springframework.boot:spring-boot-starter-webflux')
+}
+
+generateJava{
+    schemaPaths = ["${projectDir}/src/main/resources/schema"] // List of directories containing schema files
+    packageName = 'com.example.test' // The package name to use to generate sources
+    generateClient = true // Enable generating the type safe query API
+    typeMapping = ["BigDecimal": "java.math.BigDecimal"]
+}
+
